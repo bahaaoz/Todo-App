@@ -25,14 +25,23 @@ class _DisplayListState extends State<DisplayList> {
   void initState() {
     super.initState();
     loading();
-    controller.loadControl("", true);
+    skletonHide();
   }
 
+  bool skletonPage = true;
+  Future<void> skletonHide() async {
+    await controller.loadControl("", true);
+    
+      skletonPage = false;
+    
+  }
+
+  bool twoSlot = true;
   void loading() {
-    scrollController.addListener(() {
+    scrollController.addListener(() async {
       if (scrollController.position.maxScrollExtent ==
           scrollController.offset) {
-        controller.loadControl(lastSearch, false);
+        twoSlot = await controller.loadControl(lastSearch, false);
       }
     });
   }
@@ -44,12 +53,14 @@ class _DisplayListState extends State<DisplayList> {
         return RefreshIndicator(
           onRefresh: () async {
             setState(() {
-              controller.getList.clear();
+              //controller.getList.clear();
+              skletonPage = true;
             });
 
-            return controller.loadControl(lastSearch, true);
+            await controller.loadControl(lastSearch, true);
+            skletonPage = false;
           },
-          child: controller.size == 0
+          child: skletonPage
               ? ListView.builder(
                   itemCount: 10,
                   itemBuilder: (context, index) {
@@ -86,8 +97,10 @@ class _DisplayListState extends State<DisplayList> {
                           );
                         },
                       );
-                    } else {
+                    } else if (!twoSlot) {
                       return skelton();
+                    } else {
+                      return Container();
                     }
                   },
                 ),
