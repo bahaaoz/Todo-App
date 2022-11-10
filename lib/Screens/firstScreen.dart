@@ -101,7 +101,7 @@ class _FirstScreenState extends State<FirstScreen> {
                     ),
                   ]),
                 ),
-                sharedPreferences!.getString("type") == "anon"
+                sharedPreferences!.getString("type") != "anon"
                     ? Column(
                         children: [
                           Container(
@@ -165,7 +165,6 @@ class _FirstScreenState extends State<FirstScreen> {
                                 setState(() {
                                   loading = false;
                                 });
-                                 
                               },
                             ),
                           )

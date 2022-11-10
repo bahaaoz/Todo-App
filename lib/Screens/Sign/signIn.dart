@@ -14,10 +14,12 @@ class SignIn extends StatefulWidget {
   State<SignIn> createState() => _SignInState();
 }
 
+FirebaseAuthentication auth = FirebaseAuthentication();
+
 class _SignInState extends State<SignIn> {
   /// SupabaseAuth auth = SupabaseAuth();
   bool loading = false;
-  FirebaseAuthentication auth = FirebaseAuthentication();
+
   ThemeController themeController = ThemeController();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();

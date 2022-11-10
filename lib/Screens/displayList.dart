@@ -1,9 +1,11 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:todo_app/DataContoller/dataController.dart';
 import 'package:todo_app/Screens/edit.dart';
 import 'package:todo_app/Screens/firstScreen.dart';
 import 'package:todo_app/Screens/searchForm.dart';
+import 'package:todo_app/SqlfLite/sqLite.dart';
 import 'package:todo_app/Widgets/card.dart';
 
 import '../DataContoller/todo.dart';
@@ -19,11 +21,12 @@ class DisplayList extends StatefulWidget {
 
 class _DisplayListState extends State<DisplayList> {
   ScrollController scrollController = ScrollController();
-
+  SqlLite localdb = SqlLite();
   DataController controller = Get.find();
   @override
   void initState() {
     super.initState();
+
     loading();
     skletonHide();
   }
@@ -31,17 +34,18 @@ class _DisplayListState extends State<DisplayList> {
   bool skletonPage = true;
   Future<void> skletonHide() async {
     await controller.loadControl("", true);
-    
-      skletonPage = false;
-    
+
+    skletonPage = false;
   }
 
   bool twoSlot = true;
   void loading() {
     scrollController.addListener(() async {
+      twoSlot = false;
       if (scrollController.position.maxScrollExtent ==
           scrollController.offset) {
-        twoSlot = await controller.loadControl(lastSearch, false);
+        await controller.loadControl(lastSearch, false);
+        twoSlot = true;
       }
     });
   }
@@ -80,7 +84,6 @@ class _DisplayListState extends State<DisplayList> {
                         },
                         onClickEdit: () {
                           Navigator.pop(context);
-                          print(controller.getList[index]);
                           showDialog(
                             context: context,
                             builder: (context) {

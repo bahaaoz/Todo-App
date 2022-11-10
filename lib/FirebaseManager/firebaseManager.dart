@@ -1,92 +1,91 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:todo_app/Screens/searchForm.dart';
-import 'package:todo_app/main.dart';
+import 'package:todo_app/Screens/Sign/signIn.dart';
 
 import '../DataContoller/todo.dart';
 
-FirebaseFirestore _firebaseStorage = FirebaseFirestore.instance;
-
 class FirebaseManager {
   //normal read
-  Future<List<Todo>> readData(int from) async {
-    final response = await _firebaseStorage
-        .collection("todo-list")
-        .limit(from + 9)
-        .orderBy("create-date")
-        .get();
-    List<Todo> list = [];
+  FirebaseFirestore? _firebaseStorage;
 
-    for (var x in response.docs) {
-      if (userUID == x.get("user-add") && x.get("status") == true) {
-        Todo todo = Todo(
-          id: x.id,
-          name: x.get("name"),
-          addDate: DateTime.fromMillisecondsSinceEpoch(
-              x.get("create-date").millisecondsSinceEpoch),
-          description: x.get("description"),
-          todoDone: x.get("done"),
-          dueDate: DateTime.fromMillisecondsSinceEpoch(
-              x.get("duedate").millisecondsSinceEpoch),
-        );
-        list.add(todo);
+  FirebaseManager() {
+    _firebaseStorage = FirebaseFirestore.instance;
+  }
+
+  int pagLength = 9;
+  int lengthOfData = 0;
+  Future<List<Todo>> readData(bool reload) async {
+    List<Todo> list = [];
+    try {
+      if (reload) {
+        lengthOfData = 0;
       }
-    }
+
+      await _firebaseStorage!
+          .collection("todolist")
+          .doc(auth.currentUs().toString())
+          .collection("todos")
+          .orderBy("create-date")
+          .get()
+          .then((value) {
+        //fetch data by page length
+        for (int i = 0; lengthOfData < value.size && i < pagLength; i++) {
+          QueryDocumentSnapshot map = value.docs.elementAt(lengthOfData);
+          //
+          Todo todo = Todo(
+            id: map.id,
+            name: map['name'],
+            addDate: DateTime.fromMillisecondsSinceEpoch(
+                map["create-date"].millisecondsSinceEpoch),
+            description: map['description'],
+            todoDone: map['done'],
+            dueDate: DateTime.fromMillisecondsSinceEpoch(
+                map["duedate"].millisecondsSinceEpoch),
+          );
+          //
+          lengthOfData++;
+          list.add(todo);
+        }
+        //end fetch
+      });
+    } catch (e) {}
 
     return list;
   }
-
-//search read data
-
-  Future<List<Todo>> readDataSearch(int from, String str) async {
-    final response = await _firebaseStorage
-        .collection("todo-list")
-        .limit(from + 9)
-        .orderBy("create-date")
-        .get();
-    List<Todo> list = [];
-    for (var x in response.docs) {
-      if (userUID == x.get("user-add") && x.get("status") == true) {
-        Todo todo = Todo(
-          id: x.id,
-          name: x.get("name"),
-          addDate: DateTime.fromMillisecondsSinceEpoch(
-              x.get("create-date").millisecondsSinceEpoch),
-          description: x.get("description"),
-          todoDone: x.get("done"),
-          dueDate: DateTime.fromMillisecondsSinceEpoch(
-              x.get("duedate").millisecondsSinceEpoch),
-        );
-        list.add(todo);
-      }
-    }
-
-    return list;
-  }
-
-  ///add data db
 
   void addTodo(Todo todo) {
-    _firebaseStorage.collection("todo-list").add({
+    Map<String, dynamic> m = {
       "name": todo.name,
       "description": todo.description,
       "duedate": todo.dueDate,
       "create-date": Timestamp.now(),
       "done": false,
       "status": true,
-      "user-add": userUID,
-    });
+    };
+    _firebaseStorage!
+        .collection("todolist")
+        .doc(auth.currentUs().toString())
+        .collection("todos")
+        .add(m);
   }
 
 //delete db
   void deleteTodo(Todo todo) {
-    _firebaseStorage.collection("todo-list").doc(todo.id).update({
-      "status": false,
-    });
+    _firebaseStorage!
+        .collection("todolist")
+        .doc(auth.currentUs())
+        .collection("todos")
+        .doc(todo.id)
+        .update({"status": false});
   }
 
 //update
   void updateTodo(Todo todo) {
-    _firebaseStorage.collection("todo-list").doc(todo.id).update({
+    _firebaseStorage!
+        .collection("todolist")
+        .doc(auth.currentUs())
+        .collection("todos")
+        .doc(todo.id)
+        .update({
       "name": todo.name,
       "description": todo.description,
       "done": false,
@@ -94,8 +93,10 @@ class FirebaseManager {
   }
 
   void changeToggle(Todo todo) {
-    _firebaseStorage
-        .collection("todo-list")
+    _firebaseStorage!
+        .collection("todolist")
+        .doc(auth.currentUs())
+        .collection("todos")
         .doc(todo.id)
         .update({"done": todo.todoDone});
   }
