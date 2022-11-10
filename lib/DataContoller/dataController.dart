@@ -1,15 +1,19 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:todo_app/DataContoller/todo.dart';
+import 'package:todo_app/FirebaseManager/firebaseAuthentication.dart';
 import 'package:todo_app/FirebaseManager/firebaseManager.dart';
 
 class DataController extends GetxController {
   FirebaseManager? _firebaseManager;
+  FirebaseAuthentication? _firebaseAuth;
   List<Todo>? _todoList;
   int get size => _todoList!.length;
   List<Todo> get getList => _todoList!;
 
   DataController() {
     _firebaseManager = FirebaseManager();
+    _firebaseAuth = FirebaseAuthentication();
     _todoList = [];
   }
 //load data _____________________________________
@@ -60,5 +64,9 @@ class DataController extends GetxController {
   void changeToggle(Todo todo) {
     todo.todoDone = !todo.todoDone!;
     _firebaseManager!.changeToggle(todo);
+  }
+
+  bool get isAnonymous {
+    return _firebaseAuth!.isAnonymous;
   }
 }

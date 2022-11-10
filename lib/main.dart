@@ -44,6 +44,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     MyLocaleController getController = Get.put(MyLocaleController());
+
     Get.put(DataController());
 
     return MultiProvider(

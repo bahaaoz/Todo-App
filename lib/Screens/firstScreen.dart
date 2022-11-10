@@ -6,11 +6,13 @@ import 'package:todo_app/FirebaseManager/firebaseAuthentication.dart';
 import 'package:todo_app/Localeization&&Theme/themeController.dart';
 import 'package:todo_app/Localeization&&Theme/myLocale.dart';
 import 'package:todo_app/Localeization&&Theme/myLocaleController.dart';
+import 'package:todo_app/Screens/Sign/signIn.dart';
 import 'package:todo_app/Screens/Sign/signPage.dart';
 import 'package:todo_app/Screens/add.dart';
 import 'package:todo_app/Screens/displayList.dart';
 import 'package:todo_app/Screens/searchForm.dart';
-import 'package:todo_app/main.dart';
+
+import '../DataContoller/dataController.dart';
 
 FirebaseAuthentication _firebaseAuthentication = FirebaseAuthentication();
 
@@ -61,6 +63,17 @@ class _FirstScreenState extends State<FirstScreen> {
                   width: double.infinity,
                   height: 150,
                   child: Stack(children: [
+                    GetBuilder<DataController>(
+                      builder: (controller) {
+                        return auth.isAnonymous
+                            ? Container()
+                            : Positioned(
+                                top: 50,
+                                left: 20,
+                                child: Text(auth.email()),
+                              );
+                      },
+                    ),
                     Positioned(
                       right: 5,
                       top: 30,
@@ -101,10 +114,10 @@ class _FirstScreenState extends State<FirstScreen> {
                     ),
                   ]),
                 ),
-                sharedPreferences!.getString("type") != "anon"
-                    ? Column(
-                        children: [
-                          Container(
+                GetBuilder<DataController>(
+                  builder: (controller) {
+                    return auth.isAnonymous
+                        ? Container(
                             margin: const EdgeInsets.symmetric(
                                 horizontal: 10, vertical: 5),
                             width: double.infinity,
@@ -131,11 +144,7 @@ class _FirstScreenState extends State<FirstScreen> {
                               },
                             ),
                           )
-                        ],
-                      )
-                    : Column(
-                        children: [
-                          Container(
+                        : Container(
                             margin: const EdgeInsets.symmetric(
                                 horizontal: 10, vertical: 5),
                             width: double.infinity,
@@ -157,19 +166,13 @@ class _FirstScreenState extends State<FirstScreen> {
                                 ),
                               ),
                               onPressed: () async {
-                                setState(() {
-                                  loading = true;
-                                });
                                 await _firebaseAuthentication.signout();
-                                Navigator.of(context).pop();
-                                setState(() {
-                                  loading = false;
-                                });
+                                // Navigator.of(context).pop();
                               },
                             ),
-                          )
-                        ],
-                      ),
+                          );
+                  },
+                )
               ],
             ),
           ),

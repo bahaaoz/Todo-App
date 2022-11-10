@@ -1,10 +1,8 @@
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/material.dart';
+ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:todo_app/DataContoller/dataController.dart';
 import 'package:todo_app/Screens/edit.dart';
-import 'package:todo_app/Screens/firstScreen.dart';
-import 'package:todo_app/Screens/searchForm.dart';
+ import 'package:todo_app/Screens/searchForm.dart';
 import 'package:todo_app/SqlfLite/sqLite.dart';
 import 'package:todo_app/Widgets/card.dart';
 

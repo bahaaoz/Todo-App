@@ -1,9 +1,12 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:get/get.dart';
+import 'package:todo_app/DataContoller/dataController.dart';
 import 'package:todo_app/main.dart';
 
-class FirebaseAuthentication {
+class FirebaseAuthentication extends GetxController {
   FirebaseAuth? _firebaseAuth;
 
   FirebaseAuthentication() {
@@ -11,6 +14,10 @@ class FirebaseAuthentication {
   }
   currentUs() {
     return _firebaseAuth!.currentUser!.uid.toString();
+  }
+
+  email() {
+    return _firebaseAuth!.currentUser!.email;
   }
 
   Future<String> signUp(String email, String password) async {
@@ -68,5 +75,11 @@ class FirebaseAuthentication {
     await _firebaseAuth!.signOut();
 
     await signUpAnonymous();
+    DataController d = Get.find();
+    d.loadControl("", true);
+  }
+
+  bool get isAnonymous {
+    return _firebaseAuth!.currentUser!.isAnonymous;
   }
 }

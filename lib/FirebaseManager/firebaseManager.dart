@@ -15,40 +15,37 @@ class FirebaseManager {
   int lengthOfData = 0;
   Future<List<Todo>> readData(bool reload) async {
     List<Todo> list = [];
-    try {
-      if (reload) {
-        lengthOfData = 0;
+    if (reload) {
+      lengthOfData = 0;
+    }
+
+    await _firebaseStorage!
+        .collection("todolist")
+        .doc(auth.currentUs().toString())
+        .collection("todos")
+        .where("status", isEqualTo: true)
+        //.orderBy("create-date", descending: true)
+        .get()
+        .then((value) {
+      //fetch data by page length
+      for (int i = 0; lengthOfData < value.size && i < pagLength; i++) {
+        QueryDocumentSnapshot map = value.docs.elementAt(lengthOfData);
+        //
+        Todo todo = Todo(
+          id: map.id,
+          name: map['name'],
+          addDate: DateTime.fromMillisecondsSinceEpoch(
+              map["create-date"].millisecondsSinceEpoch),
+          description: map['description'],
+          todoDone: map['done'],
+          dueDate: DateTime.fromMillisecondsSinceEpoch(
+              map["duedate"].millisecondsSinceEpoch),
+        );
+        //
+        lengthOfData++;
+        list.add(todo);
       }
-
-      await _firebaseStorage!
-          .collection("todolist")
-          .doc(auth.currentUs().toString())
-          .collection("todos")
-          .orderBy("create-date")
-          .get()
-          .then((value) {
-        //fetch data by page length
-        for (int i = 0; lengthOfData < value.size && i < pagLength; i++) {
-          QueryDocumentSnapshot map = value.docs.elementAt(lengthOfData);
-          //
-          Todo todo = Todo(
-            id: map.id,
-            name: map['name'],
-            addDate: DateTime.fromMillisecondsSinceEpoch(
-                map["create-date"].millisecondsSinceEpoch),
-            description: map['description'],
-            todoDone: map['done'],
-            dueDate: DateTime.fromMillisecondsSinceEpoch(
-                map["duedate"].millisecondsSinceEpoch),
-          );
-          //
-          lengthOfData++;
-          list.add(todo);
-        }
-        //end fetch
-      });
-    } catch (e) {}
-
+    });
     return list;
   }
 
@@ -92,6 +89,7 @@ class FirebaseManager {
     });
   }
 
+//
   void changeToggle(Todo todo) {
     _firebaseStorage!
         .collection("todolist")
