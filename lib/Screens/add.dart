@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:todo_app/DataContoller/dataController.dart';
 import 'package:todo_app/DataContoller/todo.dart';
 
-class Add  extends StatelessWidget {
+class Add extends StatelessWidget {
   Add({Key? key}) : super(key: key);
   DataController controller = Get.find();
   TextEditingController nameController = TextEditingController();
