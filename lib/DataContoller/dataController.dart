@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:todo_app/DataContoller/todo.dart';
 import 'package:todo_app/FirebaseManager/firebaseAuthentication.dart';
@@ -27,6 +26,7 @@ class DataController extends GetxController {
       _reload = true;
     }
     await _loadData();
+    print("reddddda");
     update();
   }
 
@@ -67,6 +67,6 @@ class DataController extends GetxController {
   }
 
   bool get isAnonymous {
-    return _firebaseAuth!.isAnonymous;
+    return _firebaseAuth!.isAnonymouss;
   }
 }

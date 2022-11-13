@@ -35,11 +35,17 @@ class FirebaseAuthentication extends GetxController {
   }
 
   Future<void> checkTheUser() async {
+    print("/....../");
     try {
+      print("======================");
+      print(_firebaseAuth!.currentUser!.email);
       await _firebaseAuth!.currentUser!.reload();
+      print(_firebaseAuth!.currentUser!.email);
+      print("======================");
     } catch (e) {}
+
     if (_firebaseAuth!.currentUser == null) {
-      signUpAnonymous();
+      await signout();
     } else {} //
   }
 
@@ -59,7 +65,7 @@ class FirebaseAuthentication extends GetxController {
     }
   }
 
-  Future signUpAnonymous() async {
+  Future _signInAnonymous() async {
     try {
       final signUpAnon = await _firebaseAuth!.signInAnonymously();
 
@@ -67,6 +73,9 @@ class FirebaseAuthentication extends GetxController {
 
       sharedPreferences!.setString("token", token);
       tokenId = token;
+
+      DataController d = Get.find();
+      d.loadControl("", true);
     } catch (e) {}
   }
 
@@ -74,12 +83,16 @@ class FirebaseAuthentication extends GetxController {
     sharedPreferences!.remove("token");
     await _firebaseAuth!.signOut();
 
-    await signUpAnonymous();
+    await _signInAnonymous();
     DataController d = Get.find();
     d.loadControl("", true);
   }
 
-  bool get isAnonymous {
+  bool get isAnonymouss {
+     print(";;;;;;;");
+
+    print(_firebaseAuth!.currentUser!.isAnonymous);
+    print(";;;;;;;");
     return _firebaseAuth!.currentUser!.isAnonymous;
   }
 }

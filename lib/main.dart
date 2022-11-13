@@ -2,17 +2,14 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
-import 'package:provider/single_child_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:todo_app/FirebaseManager/firebaseAuthentication.dart';
 import 'package:todo_app/Localeization&&Theme/themeController.dart';
 import 'package:todo_app/Localeization&&Theme/myLocale.dart';
 import 'package:todo_app/Localeization&&Theme/myLocaleController.dart';
 import 'package:todo_app/Screens/splash.dart';
 import 'DataContoller/dataController.dart';
 
-FirebaseAuthentication _create = FirebaseAuthentication();
-
+ 
 SharedPreferences? sharedPreferences;
 String? tokenId;
 void main() async {
@@ -25,11 +22,7 @@ void main() async {
 
   sharedPreferences = await SharedPreferences.getInstance();
 
-  tokenId = sharedPreferences!.getString("token");
-  if (tokenId == null) {
-    await _create.signUpAnonymous();
-  }
-
+ 
   runApp(const MyApp());
 }
 

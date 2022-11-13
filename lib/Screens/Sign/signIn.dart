@@ -14,7 +14,6 @@ class SignIn extends StatefulWidget {
   State<SignIn> createState() => _SignInState();
 }
 
-FirebaseAuthentication auth = FirebaseAuthentication();
 
 class _SignInState extends State<SignIn> {
   /// SupabaseAuth auth = SupabaseAuth();

@@ -1,7 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:todo_app/Screens/Sign/signIn.dart';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../DataContoller/todo.dart';
+import '../Screens/firstScreen.dart';
 
 class FirebaseManager {
   //normal read
@@ -19,33 +19,35 @@ class FirebaseManager {
       lengthOfData = 0;
     }
 
-    await _firebaseStorage!
-        .collection("todolist")
-        .doc(auth.currentUs().toString())
-        .collection("todos")
-        .where("status", isEqualTo: true)
-        //.orderBy("create-date", descending: true)
-        .get()
-        .then((value) {
-      //fetch data by page length
-      for (int i = 0; lengthOfData < value.size && i < pagLength; i++) {
-        QueryDocumentSnapshot map = value.docs.elementAt(lengthOfData);
-        //
-        Todo todo = Todo(
-          id: map.id,
-          name: map['name'],
-          addDate: DateTime.fromMillisecondsSinceEpoch(
-              map["create-date"].millisecondsSinceEpoch),
-          description: map['description'],
-          todoDone: map['done'],
-          dueDate: DateTime.fromMillisecondsSinceEpoch(
-              map["duedate"].millisecondsSinceEpoch),
-        );
-        //
-        lengthOfData++;
-        list.add(todo);
-      }
-    });
+    try {
+      await _firebaseStorage!
+          .collection("todolist")
+          .doc(auth.currentUs().toString())
+          .collection("todos")
+          .where("status", isEqualTo: true)
+          //.orderBy("create-date", descending: true)
+          .get()
+          .then((value) {
+        //fetch data by page length
+        for (int i = 0; lengthOfData < value.size && i < pagLength; i++) {
+          QueryDocumentSnapshot map = value.docs.elementAt(lengthOfData);
+          //
+          Todo todo = Todo(
+            id: map.id,
+            name: map['name'],
+            addDate: DateTime.fromMillisecondsSinceEpoch(
+                map["create-date"].millisecondsSinceEpoch),
+            description: map['description'],
+            todoDone: map['done'],
+            dueDate: DateTime.fromMillisecondsSinceEpoch(
+                map["duedate"].millisecondsSinceEpoch),
+          );
+          //
+          lengthOfData++;
+          list.add(todo);
+        }
+      });
+    } catch (ee) {}
     return list;
   }
 
